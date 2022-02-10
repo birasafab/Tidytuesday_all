@@ -82,6 +82,4 @@ new_sankey_data %>%
 ggsave(
   filename = "African-American pilots WWII.png",
   device = "png")
-
-
 ```

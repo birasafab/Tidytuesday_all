@@ -1,0 +1,84 @@
+---
+title: "Learning other plotting skills regarding this week's tidytuesday dataset"
+author: "birasafab"
+date: "2/10/2022"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+```
+
+# downloading this week's dataset
+```{r}
+tt = tt_load(x = "2022-02-08")
+
+airmen = tt$airmen
+
+# cleaning
+
+
+
+airmen <- airmen %>% 
+  mutate(pilot_type = case_when(pilot_type=="Liaison pilot" | pilot_type== "Liason pilot" ~ "Liason Pilot",
+                                pilot_type== "Service pilot" ~ "Service Pilot",
+                                pilot_type == "Single engine" ~ "Single Engine",
+                                pilot_type == "Twin engine" ~ "Twin Engine"))
+
+# removing missing values from the state column
+airmen_clean = airmen %>% 
+  filter(!is.na(state))
+
+
+airmen_clean %>% 
+  count(pilot_type, sort = TRUE)
+
+# rearranging the dataset
+
+airmen_clean$pilot_type = factor(
+  airmen_clean$pilot_type, levels = c("Service Pilot","Liason Pilot","Twin Engine", "Single Engine")
+)
+
+numbers  = airmen_clean %>% 
+  group_by(pilot_type) %>% 
+  count() %>% 
+  mutate(numb = paste(pilot_type,n, sep = ", "))
+
+# chart 1: bar plot in polar coordinates
+
+airmen_clean %>% 
+  group_by(pilot_type, state) %>% 
+  summarise(n  = n()) %>% 
+  ggplot(aes(pilot_type,n, fill = pilot_type))+
+  ylim(0,750)+
+  geom_bar(stat = "identity")+
+  coord_polar(theta = "y")+
+  geom_label(data = numbers, aes(label = c(numb)))+
+ # facet_wrap(~ state)+
+  theme_light()+
+
+  theme(legend.position = "none",
+    axis.ticks = element_blank(),
+    axis.text = element_blank(),
+    panel.grid = element_blank(),
+    axis.title = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_rect(fill = "black")
+  )+
+  labs(title = "African-American pilots during WWII and beyond",
+       caption = "Plot by Birasafab | inspired by Morah | #Tidytuesday")
+
+```
+
+```{r}
+# This will save your most recent plot
+ggsave(
+  filename = "African-American pilots WWII.png",
+  device = "png")
+```
+
