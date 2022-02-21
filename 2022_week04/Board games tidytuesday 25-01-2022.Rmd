@@ -1,0 +1,30 @@
+---
+title: "Board games tidytuesday 25-01-2022"
+author: "birasafab"
+date: "2/11/2022"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+```
+
+# Loading this week's dataset
+
+```{r}
+board_games = tt_load("2022-01-25")
+
+details = board_games$details
+ratings = board_games$ratings
+```
+
+# data wrangling
+```{r}
+details %>% 
+  count()
+```
