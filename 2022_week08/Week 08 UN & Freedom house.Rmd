@@ -1,0 +1,80 @@
+---
+title: "TidyTemplate"
+date: 2022-02-22
+output: html_document
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+
+```
+
+# Load the weekly Data
+
+
+```{r Load}
+
+tt <- tt_load("2022-02-22")
+
+```
+
+
+# Data wrangling --------------------------------------------------------------------
+```{r}
+freedom = tt$freedom
+
+data_text = tibble(
+  x = 
+)
+
+freedom %>% 
+  mutate(Status = ifelse(Status=="F","Free",ifelse(Status=="NF","Not Free",ifelse(Status == "PF", "Partially Free",Status)))) %>% 
+  group_by(year) %>% 
+  count(Status) %>% 
+  mutate(Status = fct_reorder(Status,-n)) %>% 
+  ggplot(aes(year,n, fill = Status))+
+  geom_area()+
+  # geom_label(aes(label = Status))+
+  labs(
+    title = "Number of countries per Freedom status",
+    y = "Number of countries",
+    x = "Year of observation",
+    caption = "Plot by Birasafab | Freedom House & United Nations | #Tidytuesday",
+    fill = "Countries' Freedom status",
+    subtitle = "Many of the countries worldwide were reported to be free followed by \n partially free countries group and those which are not free"
+  )+
+  theme(
+    panel.grid = element_blank(),
+    plot.background = element_rect(fill = "black"),
+    panel.background = element_rect(fill = "black"),
+    axis.title = element_text(color = "white"),
+    plot.title = element_text(color = "white"),
+    plot.subtitle = element_text(color = "white"),
+    legend.background = element_rect(fill = "black"),
+    legend.title = element_text(color ="white"),
+    legend.text = element_text(color= "white"),
+    plot.caption = element_text(color = "white"),
+    axis.text = element_text(color = "white"),
+    axis.ticks = element_line(color = "white"),
+    axis.line = element_line(color = "white")
+  )
+```
+
+# Save Image
+
+Save your image for sharing. Be sure to use the `#TidyTuesday` hashtag in your post on twitter! 
+
+```{r}
+
+# This will save your most recent plot
+ggsave(
+  filename = "Countries' Freedom status.png",
+  device = "png")
+
+```
