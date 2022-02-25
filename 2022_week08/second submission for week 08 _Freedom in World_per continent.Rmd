@@ -1,0 +1,55 @@
+---
+title: "Second submission for Week 08_Freedom in the World"
+author: "birasafab"
+date: "2/25/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+librar(tidytuesdayR)
+
+```
+
+
+# Load the weekly Data
+
+
+```{r Load}
+
+freedom <- tt_load("2022-02-22")$freedom
+
+```
+
+## Level of freedom per continent
+```{r}
+freedom %>% 
+  janitor::clean_names() %>% 
+ # filter(country %in% c("Rwanda","Uganda","Burundi","Tanzania","Kenya")) %>% 
+  group_by(region_name, year) %>% 
+  mutate(IFW = (cl+pr)/2,
+         averaged_freedom = mean(IFW)) %>% 
+  ungroup() %>% 
+  group_by(region_name,year) %>% 
+  ggplot(aes(year,averaged_freedom, color = region_name))+
+  geom_line(size = 2)+
+  scale_color_manual(values = c("#ff66ff","#33ff99","#000000","#3399ff","#3333ff"))+
+  bbplot::bbc_style()+
+  labs(
+    title = "Continental level of freedom",
+    subtitle = "Asia and Africa are the least free continents \n while Ocenia and Europe are the most free continents",
+    caption = "plot by Birasafab | Freedom House & UN data by way of Arthur Cheib"
+  )+
+ theme(
+    plot.caption = element_text(color = "black", face = "bold", size = 15)
+  )
+```
+```{r}
+
+```
+
+# saving the last plot (last plot)
+```{r}
+ggsave(filename = "level of freedom per continent.png", device = "png")
+```
