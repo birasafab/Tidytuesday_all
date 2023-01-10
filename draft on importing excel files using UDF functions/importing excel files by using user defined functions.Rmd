@@ -1,0 +1,23 @@
+---
+title: "excel data import"
+author: "birasafab"
+date: "3/25/2022"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Trying to use a user defined function
+```{r}
+source(file = "C:/Users/fabrice.birasa/Documents/PERSONAL/MININFRA/WATSAN department/Districts WASH Investment Plans/data analysis/MININFRA-related-work/Importing multible excel sheets from multiple workbook.R")
+```
+
+# checking to see if that UDF has come into effect
+```{r}
+import_excel(sheet_n = 2)
+```
+
