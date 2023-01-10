@@ -1,0 +1,42 @@
+---
+title: "Learning how to use rtweet package on twitter"
+author: "birasafab"
+date: "3/2/2022"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(rtweet)
+
+```
+
+
+## setting up your environment variable
+
+```{r}
+Sys.setenv(BEARER_TOKEN = "YOUR_BEARER_TOKEN")
+```
+
+
+
+creating tokens
+```{r}
+## store api keys 
+
+api_key <- "XqQDLuCdDQ1Xe1yd5f1ljiA6e"
+
+api_secret_key <- "MF9tQPzyYuOmNyStBcZ3rWhxqIdzC0Tw233188eH4C0KRrPmaE"
+
+
+# authenticate via web browser
+
+token <- create_token(
+  app = "test_app_one",
+  consumer_key = api_key,
+  consumer_secret = api_secret_key)
+```
+
