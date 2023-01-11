@@ -1,0 +1,23 @@
+"0","tt <- tt_load(""2023-01-10"")
+"
+"2","--- Compiling #TidyTuesday Information for 2023-01-10 ----
+"
+"2","--- There are 2 files available ---
+"
+"2","--- Starting Download ---
+"
+"1","
+"
+"1","	Downloading file 1 of 2: `PFW_2021_public.csv`
+"
+"1","	Downloading file 2 of 2: `PFW_count_site_data_public_2021.csv`
+"
+"1","
+"
+"2","--- Download complete ---
+"
+"0","1+1"
+"1","[1]"
+"1"," 2"
+"1","
+"
