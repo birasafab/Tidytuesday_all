@@ -1,0 +1,165 @@
+---
+title: "Learning to use word analysis"
+author: "birasafab"
+date: "3/8/2022"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+
+library(tm)
+
+```
+
+# reading the data to be used
+
+```{r}
+apple = readr::read_csv('https://raw.githubusercontent.com/bkrai/R-files-from-YouTube/main/apple.csv')
+
+```
+
+# data wrangling
+```{r}
+ corpus = iconv(apple$text, to = "UTF-8")
+
+ Corpus = Corpus(VectorSource(corpus))
+ 
+ # inspect(Corpus[1:5])
+```
+
+# cleaning text
+```{r}
+Corpus = Corpus %>% 
+  tm_map(tolower) %>% 
+  tm_map(removePunctuation) %>% 
+  tm_map(removeNumbers) %>% 
+  tm_map(removeWords, stopwords("english"))
+
+ # inspect(Corpus[1:5])
+```
+
+```{r}
+removeUrl = function(x)gsub("http[[:alnum:]]*", "",x)
+
+Corpus = tm_map(Corpus,content_transformer(removeUrl))
+
+cleanset = tm_map(Corpus, stripWhitespace) 
+
+cleanset = cleanset %>% 
+  tm_map(removeWords,c("aapl","apple"))
+
+# inspect(cleanset[1:5])
+```
+
+# Term document matrix
+```{r}
+tdm = TermDocumentMatrix(cleanset)
+
+tdm = as.matrix(tdm)
+```
+
+# Bar plot
+```{r}
+W = rowSums(tdm)
+
+
+selected = subset(W, W>=1)
+```
+
+# Bar plot
+```{r}
+
+barplot(
+  selected,
+  las = 2,
+  col = rainbow(100))
+```
+
+
+# Wordcloud
+```{r}
+library(wordcloud)
+
+words = sort(rowSums(tdm),decreasing = TRUE)
+
+set.seed(222)
+
+  wordcloud(words = names(words),
+            freq = words,
+      #      max.words = 150,
+            random.order = FALSE,
+            min.freq = 3,
+            colors = brewer.pal(8, "Dark2"),
+      scale = c(5,.4),
+      rot.per = .29)
+
+```
+
+# Interesting wordcloud
+```{r}
+library(wordcloud2)
+
+# best way of installing unavailable packages or loading them in current session of R
+if(!require(wordcloud2)) install.packages("wordcloud2")
+
+
+final = data.frame(
+  names(words),words
+)
+
+final = final %>% 
+  mutate(names.words.=str_replace_all(names.words.,"earnings","Birasa"))
+
+# star shape
+
+wordcloud2(final,
+           size = .7,
+           shape = "star")
+
+
+# triangle
+
+wordcloud2(final,
+         #  size = 1.5,
+           shape = "circle",
+         backgroundColor = "#00ccff")
+
+#ggsave(filename = "background.png",device = "png")
+```
+
+# Letter Cloud
+
+```{r}
+letterCloud(final,
+            word = "A",
+            wordSize = 1,
+            color = brewer.pal(8, "Dark2"))
+```
+
+# With the above issue of not solving the wordcloud2 output fail, I solved it as the following:
+```{r}
+# if(!require(devtools)) install.packages("devtools")
+# 
+# # 
+# devtools::install_github("lchiffon/wordcloud2")
+letterCloud(demoFreq,"R")
+```
+
+# Other solutions to this problem
+```{r}
+demofreq = demoFreq %>% 
+  filter(freq<=9)
+  
+
+letterCloud(demofreq,"R", color = 'Black', backgroundColor = 'white')
+```
+
+
+```{r}
+scales::rescale(c(1,7))
+```
+
