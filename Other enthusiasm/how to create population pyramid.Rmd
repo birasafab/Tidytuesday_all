@@ -7,8 +7,8 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Loading all the required packages to be used while creating population pyramid, as an example from: [pyramid created by Corina on twitter](https://github.com/demography101/population-pyramid-gif/blob/main/population%20pyramid%20gif.Rmd)
 
+# Loading all the required packages to be used while creating population pyramid, as an example from: [pyramid created by Corina on twitter](https://github.com/demography101/population-pyramid-gif/blob/main/population%20pyramid%20gif.Rmd)
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
