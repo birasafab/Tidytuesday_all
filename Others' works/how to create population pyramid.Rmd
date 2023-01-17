@@ -1,0 +1,95 @@
+---
+title: "population pyramid"
+author: "birasafab"
+date: "2023-01-16"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Loading all the required packages to be used while creating population pyramid, as an example from: [pyramid created by Corina on twitter](https://github.com/demography101/population-pyramid-gif/blob/main/population%20pyramid%20gif.Rmd)
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(wpp2019)
+library(ggplot2)
+library(tidyr)
+library(tidyverse)
+library(dplyr)
+library(animation)
+library(gganimate)
+library(tidyverse)
+library(plyr)
+
+# loading data to be used
+data(popF)
+data(popM)
+```
+
+
+# gathering data to be used
+```{r}
+
+## Female age groups dataset
+
+popF = popF %>% pivot_longer(names_to = "year","1950"|"1955"|"1960"|"1965"|"1970"|"1975"|"1980"|'1985'|"1990"|"1995"|"2000"|"2005"|"2010"|"2015"|"2020") %>% filter(name == "Rwanda") %>% select(-country_code) %>% add_column(Gender = "Women")%>% rename(pop = value) %>% rename_with(str_to_title)
+
+
+## Male age group dataset
+popM = popM %>% filter(name == "Rwanda") %>% pivot_longer(names_to = "year","1950"|"1955"|"1960"|"1965"|"1970"|"1975"|"1980"|'1985'|"1990"|"1995"|"2000"|"2005"|"2010"|"2015"|"2020") %>% select(-country_code) %>% add_column(Gender = "Men") %>% 
+  rename(pop = value) %>% rename_with(str_to_title)
+```
+
+
+# Merging the above two datasets
+```{r}
+pop_total = popM %>% rbind(popF)
+```
+
+# selecting the data for 2020 year
+```{r}
+pop_2020 = pop_total %>% 
+  filter(Year == 2020) %>% 
+  mutate(Pop = ifelse(Gender=="Women",1,-1)*Pop,
+         AgeGroup = factor(Age, levels = unique(Age)))
+```
+
+```{r}
+pop_total = pop_total %>% mutate(AgeGroup = factor(Age,levels=unique(Age)),
+                                 Year = as.numeric(Year),
+                                 Pop = ifelse(Gender=="Women",1,-1)*Pop)
+```
+
+
+## Creating the first static pyramid for 2020 Rwandan population pyramid
+```{r}
+ggplot()+
+  aes(AgeGroup,Pop, fill = Gender)+
+  geom_bar(data = filter(pop_total, Gender == "Women"),stat = "identity")+
+  geom_bar(data = filter(pop_total,Gender == "Men"), stat = "identity")+
+  scale_y_continuous(breaks = c(-1000,-500,0,500,1000),
+                     labels = c("1 Million","500K","0","500K","1 Million"))+
+  coord_flip()+
+  scale_fill_manual(values = c('#88C81D','#cc7E3F'))+
+  theme(
+    panel.background = element_rect(fill = "black")
+  )+
+    theme(plot.background = element_rect(fill = "#B40A2D", color = NA),
+        panel.background = element_rect(fill = "#34ebe8"),
+        axis.text = element_text(color = "white"),
+        axis.title = element_text(color = "white", size = 12),
+        plot.title = element_text(color = "white", size = 20),
+      # plot.margin = unit(c(2,1.5,1,1), "cm"),
+      #  panel.grid = element_line(color = "#4d4d4d"),
+      panel.grid.minor = element_blank(),
+      plot.caption = element_text(color = "white", size = 10))+
+  labs(fill = "Gender",
+         title = "{as.integer(frame_time)} Rwandan Population by Age Groups",
+       caption = "Created by Birasafab | data Source = United Nations World Population Prospects",
+       y = "Population size",
+       x = "Age group")+
+  transition_time(Year)
+```
+

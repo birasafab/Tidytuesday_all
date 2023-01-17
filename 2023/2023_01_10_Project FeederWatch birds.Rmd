@@ -26,5 +26,9 @@ Download the weekly data and make available in the `tt` object.
 tt <- tt_load("2023-01-10")
 
 
-tt$PFW_2021_public %>% group_by(Year) %>% count()
+PFW_2021_public = tt$PFW_2021_public
+
+PFW_count_site_data = tt$PFW_count_site_data_public_2021
 ```
+
+
